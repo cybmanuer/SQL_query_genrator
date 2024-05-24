@@ -1,0 +1,6 @@
+LLM Based Project
+That Converts the Normal Englis Language to SQL Query And fetch the Correct Data From the Dtabase
+**STEPS**
+1.Create a Database Using sql.py
+2.Create Gemini API KEY
+3.Run oncommand Line : **steramlit run app.py**
