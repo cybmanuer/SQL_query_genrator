@@ -5,6 +5,7 @@ load_dotenv()
 import streamlit as st
 import os
 import sqlite3
+import pandas as pd
 
 import google.generativeai as genai
 
@@ -104,13 +105,96 @@ Here's an example of the 'teacher' table contains:
 
 
 st.set_page_config(page_title="GenQuery-cybmanuer")
-st.header("GenQuery")
-st.subheader("It genrates the SQL queries on the STUDENT Database")
-st.subheader("")
+# st.header("GenQuery")
+# st.subheader("It genrates the SQL queries on the STUDENT Database")
+# st.subheader("")
+
+# Header and subheaders
+st.markdown('<h1 class="main-header">GenQuery</h1>', unsafe_allow_html=True)
+st.markdown('<h2 class="sub-header">It generates SQL queries on the STUDENT Database</h2>', unsafe_allow_html=True)
+
+
+show_tables = st.button("Show Tables")
+
+if show_tables:
+    # Database Structure
+    st.markdown('<h2 class="sub-header">Database Structure</h2>', unsafe_allow_html=True)
+
+    # Example data for each table
+    tables = {
+        "student": [
+            {"Column Name": "s_name", "Description": "Student name"},
+            {"Column Name": "s_reg", "Description": "Registration number"},
+            {"Column Name": "s_phno", "Description": "Phone number"},
+            {"Column Name": "s_sem", "Description": "Semester"},
+            {"Column Name": "s_comb", "Description": "Combination/course"},
+            {"Column Name": "s_pass", "Description": "Password"},
+            {"Column Name": "s_fees", "Description": "Fees"},
+            {"Column Name": "s_balance", "Description": "Balance"},
+        ],
+        "admin": [
+            {"Column Name": "a_name", "Description": "Admin username"},
+            {"Column Name": "a_pass", "Description": "Admin password"},
+        ],
+        "contact": [
+            {"Column Name": "c_name", "Description": "Name of the person who contacted"},
+            {"Column Name": "c_mail", "Description": "Email of the person who contacted"},
+            {"Column Name": "c_msg", "Description": "Message content"},
+        ],
+        "notification": [
+            {"Column Name": "msg", "Description": "Notification message"},
+            {"Column Name": "t_name", "Description": "Teacher name"},
+        ],
+        "tblfiles": [
+            {"Column Name": "FileName", "Description": "Name of the file"},
+            {"Column Name": "Location", "Description": "File location"},
+        ],
+        "teacher": [
+            {"Column Name": "t_name", "Description": "Teacher name"},
+            {"Column Name": "t_phno", "Description": "Teacher phone number"},
+            {"Column Name": "t_address", "Description": "Teacher address"},
+            {"Column Name": "t_dept", "Description": "Department/Subject taught"},
+            {"Column Name": "t_pass", "Description": "Teacher password"},
+        ],
+    }
+
+    # Display tables side by side
+    columns = st.columns(3)  # Adjust the number of columns as needed
+
+    for i, (table_name, columns_data) in enumerate(tables.items()):
+        col = columns[i % 3]  # Distribute tables across the columns
+        col.markdown(f'<h3 class="sub-header">{table_name} Table</h3>', unsafe_allow_html=True)
+        df = pd.DataFrame(columns_data)
+        col.dataframe(df.style.set_properties(**{'font-size': '12px'}))
 
 
 
-question=st.text_input("Input:",key="input")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+question = st.text_input("Input:", key="input",placeholder="Enter your question here")
 
 submit=st.button("Get Query")
 # st.header("Gemini App To Retrive SQL Data")
@@ -118,7 +202,9 @@ submit=st.button("Get Query")
 if submit:
     response=get_gemini_response(question,promt)
     # print(response)
-    st.text(f"The Query is : {response}")
+    # st.text(f"The Query is : {response}")
+    st.markdown(f'<p class="response-text">The Query is: {response}</p>', unsafe_allow_html=True)
+
     # st.markdown(response)
 
 
@@ -133,15 +219,49 @@ if submit:
 
 st.markdown("""
 <style>
-.custom-text{
-    color: black;
-    font-size: 20px;
-    font-family:Garamond;
-}
-st.text{
-    color: red;
-    font-size: 20px;
-    font-family:Garamond;
-}
+
+.main-header {
+        font-size: 30px;
+        color: white;
+    }
+    .sub-header {
+        font-size: 10px;
+        color: white;
+    }
+    .input-label {
+        font-size: 10px;
+        color: #0000FF;
+    }
+    .response-text {
+        font-size: 18px;
+        color: #000;
+        font-family: Arial, sans-serif;
+    }        
+
+            
+
+
+
+.main-header {
+        font-size: 36px;
+        color: #4CAF50;
+    }
+    .sub-header {
+        font-size: 24px;
+        color: #FF5733;
+    }
+    .input-label {
+        font-size: 20px;
+        color: #0000FF;
+    }
+    .response-text {
+        font-size: 18px;
+        color: #000;
+        font-family: Arial, sans-serif;
+    }
+    .small-font {
+        font-size: 12px;
+    }
+
 </style>
 """, unsafe_allow_html=True)
