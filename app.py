@@ -31,22 +31,6 @@ def read_sql_query(sql,db):
         print(row)
     return rows
 
-# it defines the gemini ai that how u want to create the sql query
-# by giving the example u are teaching it
-
-# promt=[
-#     """
-#     you are expert in converting English question to SQL Query.
-#     The Sql database haf the name CMS and the table as STUDENT and has the following columns-
-#     s_name`, `s_reg`, `s_phno`, `s_sem`, `s_comb`, `s_pass`, `s_fees`, `s_balance` \n\n
-#     for example 1: How many entires of records are present?
-#     Then the sql comand will something like this " SELECT * FROM student;"
-#     \nEXample 2: Tell me all the students who are studying in 1st sem ?
-#     then the sql command will we be something like " SELECT * FROM student WHERE s_sem='1 SEM';"
-#     and also code should not have ''' in the beginning and end and "sql" word in output \n
-#     if empty question is asked just show all data in database
-# """
-# ]
 
 promt=["""
        
@@ -119,26 +103,29 @@ Here's an example of the 'teacher' table contains:
 
 
 
-st.set_page_config(page_title="Retrive Any Query From Database")
-st.header("My App To Retrive SQL Data ")
+st.set_page_config(page_title="GenQuery-cybmanuer")
+st.header("GenQuery")
+st.subheader("It genrates the SQL queries on the STUDENT Database")
+st.subheader("")
+
+
 
 question=st.text_input("Input:",key="input")
 
 submit=st.button("Get Query")
-# st.subheader()
 # st.header("Gemini App To Retrive SQL Data")
 
 if submit:
     response=get_gemini_response(question,promt)
-    print(response)
+    # print(response)
     st.text(f"The Query is : {response}")
     # st.markdown(response)
 
 
-    data=read_sql_query(response,"cms.db")
+    data=read_sql_query(response,"new_cms.db")
     st.subheader("The response Is : ")
     for row in data:
-        print(row)
+        # print(row)
         # st.markdown(row)
         st.markdown(row)
 
