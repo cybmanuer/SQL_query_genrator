@@ -21,16 +21,24 @@ def get_gemini_response(question,prompt):
 
 
 def read_sql_query(sql,db):
-    conn=sqlite3.connect(db) 
-    qry=conn.cursor()
-    qry.execute(sql)
-    rows=qry.fetchall()
-    conn.commit()
-    conn.close()
+    try:
+        conn = sqlite3.connect(db)
+        qry = conn.cursor()
+        qry.execute(sql)
+        rows = qry.fetchall()
+        conn.commit()
+        conn.close()
+        for row in rows:
+            return rows
+        
+    except sqlite3.Error as e:
+        st.text(f"Sorry {e} ")
+        return 0
+            #  return f"SQL error: {e}"
+    except Exception as e:
+        st.text(f"Sorry  {e}")
+        return 0
 
-    for row in rows:
-        print(row)
-    return rows
 
 
 promt=["""
@@ -100,27 +108,21 @@ Here's an example of the 'teacher' table contains:
 
 """]
 
+
+
+
 # front end
-
-
-
 st.set_page_config(page_title="GenQuery-cybmanuer")
-# st.header("GenQuery")
-# st.subheader("It genrates the SQL queries on the STUDENT Database")
-# st.subheader("")
+
 
 # Header and subheaders
-st.markdown('<h1 class="main-header">GenQuery</h1>', unsafe_allow_html=True)
-st.markdown('<h2 class="sub-header">It generates SQL queries on the STUDENT Database</h2>', unsafe_allow_html=True)
-
+st.markdown('<h1 class="main-header">&emsp;<span>G</span>en<span>Q</span>uery</h1>', unsafe_allow_html=True)
+st.markdown('<h2 class="sub-header">I generates SQL queries and Output of the STUDENT Database</h2>', unsafe_allow_html=True)
 
 show_tables = st.button("Show Tables")
-
 if show_tables:
     # Database Structure
     st.markdown('<h2 class="sub-header">Database Structure</h2>', unsafe_allow_html=True)
-
-    # Example data for each table
     tables = {
         "student": [
             {"Column Name": "s_name", "Description": "Student name"},
@@ -128,33 +130,17 @@ if show_tables:
             {"Column Name": "s_phno", "Description": "Phone number"},
             {"Column Name": "s_sem", "Description": "Semester"},
             {"Column Name": "s_comb", "Description": "Combination/course"},
-            {"Column Name": "s_pass", "Description": "Password"},
             {"Column Name": "s_fees", "Description": "Fees"},
             {"Column Name": "s_balance", "Description": "Balance"},
         ],
         "admin": [
             {"Column Name": "a_name", "Description": "Admin username"},
-            {"Column Name": "a_pass", "Description": "Admin password"},
-        ],
-        "contact": [
-            {"Column Name": "c_name", "Description": "Name of the person who contacted"},
-            {"Column Name": "c_mail", "Description": "Email of the person who contacted"},
-            {"Column Name": "c_msg", "Description": "Message content"},
-        ],
-        "notification": [
-            {"Column Name": "msg", "Description": "Notification message"},
-            {"Column Name": "t_name", "Description": "Teacher name"},
-        ],
-        "tblfiles": [
-            {"Column Name": "FileName", "Description": "Name of the file"},
-            {"Column Name": "Location", "Description": "File location"},
         ],
         "teacher": [
             {"Column Name": "t_name", "Description": "Teacher name"},
             {"Column Name": "t_phno", "Description": "Teacher phone number"},
             {"Column Name": "t_address", "Description": "Teacher address"},
             {"Column Name": "t_dept", "Description": "Department/Subject taught"},
-            {"Column Name": "t_pass", "Description": "Teacher password"},
         ],
     }
 
@@ -169,98 +155,77 @@ if show_tables:
 
 
 
+st.markdown('<h2 class="qst">TRY:<br>1. give me Students details<br>2.who has balance fess more than 3000<br>3.which are the department  are in database</h2>', unsafe_allow_html=True)
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# input
 question = st.text_input("Input:", key="input",placeholder="Enter your question here")
 
 submit=st.button("Get Query")
-# st.header("Gemini App To Retrive SQL Data")
 
 if submit:
-    response=get_gemini_response(question,promt)
-    # print(response)
-    # st.text(f"The Query is : {response}")
-    st.markdown(f'<p class="response-text">The Query is: {response}</p>', unsafe_allow_html=True)
+    response=get_gemini_response(question,promt) 
+    st.markdown(f'<p class="response-text">The Query is : *** {response}  ***</p>', unsafe_allow_html=True)
 
-    # st.markdown(response)
-
-
-    data=read_sql_query(response,"new_cms.db")
-    st.subheader("The response Is : ")
-    for row in data:
-        # print(row)
-        # st.markdown(row)
-        st.markdown(row)
+    data=read_sql_query(response,"cms.db")
+    if(data==None):
+            st.markdown(" SORRY NO DATA")  
+    elif(data!=0):
+        st.subheader("The response Is : ")
+        for row in data:
+            st.markdown(row)
+    
 
 
-
+# css
 st.markdown("""
 <style>
-
-.main-header {
-        font-size: 30px;
-        color: white;
-    }
-    .sub-header {
-        font-size: 10px;
-        color: white;
-    }
-    .input-label {
-        font-size: 10px;
-        color: #0000FF;
-    }
-    .response-text {
-        font-size: 18px;
-        color: #000;
-        font-family: Arial, sans-serif;
-    }        
-
-            
-
 
 
 .main-header {
         font-size: 36px;
-        color: #4CAF50;
+        color: white;
+        # background-image: linear-gradient(#fe667d, #ffa375);
+        # background-color: rgba(201, 76, 76, 0.3);
+        background: linear-gradient(297deg, rgba(175,12,238,1) 27%, rgba(39,19,198,1) 100%);
+            border-radius:30px;
+
     }
     .sub-header {
         font-size: 24px;
-        color: #FF5733;
+        color: white;
+    background: linear-gradient(to right, #f32170, #ed0ad9,#fb5e04, #eedd44);
+    -webkit-text-fill-color: transparent;
+    -webkit-background-clip: text;
     }
     .input-label {
         font-size: 20px;
         color: #0000FF;
+       
     }
     .response-text {
         font-size: 18px;
-        color: #000;
+        color: orange;
         font-family: Arial, sans-serif;
+        background: rgb(91,12,238);
+        background: linear-gradient(90deg, rgba(91,12,238,1) 27%, rgba(198,19,152,1) 100%);
+        border-radius:30px;
+            padding-left:30px;
+
     }
     .small-font {
         font-size: 12px;
+    }
+    .main-header span{
+        color:orangered;    
+        font-size:40px;
+    }
+.qst{
+      font-size:18px;
+      font-family:system-ui;
+            
     }
 
 </style>
