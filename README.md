@@ -4,3 +4,8 @@ That Converts the Normal English Language to SQL Query And fetch the Correct Dat
 1.Create a Database Using sql.py
 2.Create Gemini API KEY repalce it in env.txt
 3.Run oncommand Line : **steramlit run app.py**
+
+
+Chalanges:
+Error Handling
+Prompt writing 
